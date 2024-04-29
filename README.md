@@ -1,6 +1,6 @@
 Repository of "Pseudobulk with proper offsets closely mimics generalized linear mixed models in single-cell case-control studies" by Lee and Han (2024).
 
-## Simple exmaple
+## A simple example
 The following code demonstrates the equivalence between offset pseudobulk and negative-binomial GLMM using the example from nebula repository [link](https://github.com/lhe17/nebula). 
 ```
 # load the libraries
