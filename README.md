@@ -7,7 +7,6 @@ The following code demonstrates the equivalence between offset pseudobulk and ne
 library(SingleCellExperiment)
 library(glmGamPoi)
 library(nebula)
-library(tidyverse)
 
 data(sample_data)
 
