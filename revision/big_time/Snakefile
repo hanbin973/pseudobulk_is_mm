@@ -1,0 +1,62 @@
+import numpy as np
+
+ns = np.array([60 ,80, 100])
+nc_per_s = np.array([2e3, 4e3, 8e3])
+
+sce_pattern = "sces/sce_n{n}_ncps{ncps}.rds"
+sces = expand(
+        sce_pattern,
+        n=ns,
+        ncps=nc_per_s,
+        )
+
+time_pattern = "times/time_n{n}.csv"
+times = expand(
+        time_pattern,
+        n=ns
+        )
+
+fig = "figs/fig.svg"
+
+rule all:
+    input:
+        fig
+
+# read for path argument
+# https://stackoverflow.com/questions/68620638/how-to-execute-r-inside-snakemake
+rule sces:
+    output:
+        sce_pattern
+    params:
+        ns="{n}",
+        ncps="{ncps}",
+        out_path=sce_pattern
+    script:
+        "00-simulate.R"
+
+rule times:
+    input:
+        expand(
+                sce_pattern,
+                n="{n}",
+                ncps=nc_per_s
+                )
+    output:
+        time_pattern
+    params:
+        ncps=nc_per_s
+    script:
+        "01-time.R"
+
+rule figs:
+    input:
+        expand(
+                time_pattern,
+                n=ns,
+                )
+    output:
+        fig
+    params:
+        ns=ns
+    script:
+        "02-plot.R"

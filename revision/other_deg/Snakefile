@@ -1,0 +1,104 @@
+import numpy as np
+
+ns = np.array([10,20,30,40,50])
+nc_per_s = np.array([100, 200, 500])
+fc = np.linspace(2, 4, 5)
+m = ['edger', 'deseq2']
+
+sce_pattern = "sces/sce_n{n}_ncps{ncps}_fc{fc}.rds"
+sces = expand(
+        sce_pattern,
+        n=ns,
+        ncps=nc_per_s,
+        fc=fc
+        )
+
+deg_pattern = "degs/deg_n{n}_ncps{ncps}_fc{fc}_m{m}.csv"
+degs = expand(
+        deg_pattern,
+        n=ns,
+        ncps=nc_per_s,
+        fc=fc,
+        m=m
+        )
+
+fig_pattern = "figs/fig_n{n}_ncps{ncps}_fc{fc}.rds"
+figs = expand(
+        fig_pattern,
+        n=ns,
+        ncps=nc_per_s,
+        fc=fc
+        )
+
+merge_pattern = "merge/merge_fc{fc}.svg"
+merges = expand(
+        merge_pattern,
+        fc=fc
+        )
+
+rule all:
+    input:
+        merges
+
+# read for path argument
+# https://stackoverflow.com/questions/68620638/how-to-execute-r-inside-snakemake
+rule sces:
+    output:
+        sce_pattern
+    params:
+        ns="{n}",
+        ncps="{ncps}",
+        fc="{fc}",
+        out_path=sce_pattern
+    script:
+        "00-simulate.R"
+
+rule degs:
+    input:
+        sce_pattern
+    output:
+        expand(deg_pattern,
+               n="{n}",
+               ncps="{ncps}",
+               fc="{fc}",
+               m=m
+               )
+    params:
+        ns="{n}",
+        ncps="{ncps}",
+        fc="{fc}",
+        in_path=sce_pattern,
+    script:
+        "01-differential.R"
+
+rule figs:
+    input:
+        expand(
+                deg_pattern,
+                n="{n}",
+                ncps="{ncps}",
+                fc="{fc}",
+                m=m
+                )
+    output:
+        fig_pattern
+    params:
+        ns="{n}",
+        ncps="{ncps}",
+        fc="{fc}"
+    script:
+        "02-plot.R"
+
+rule merge:
+    input:
+        expand(
+            fig_pattern,
+            n=ns,
+            ncps=nc_per_s,
+            fc="{fc}"
+        )
+    output:
+        merge_pattern
+    script:
+        "03-merge.R"
+        
