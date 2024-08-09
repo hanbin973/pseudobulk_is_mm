@@ -1,4 +1,4 @@
-Repository of "Pseudobulk with proper offsets closely mimics generalized linear mixed models in single-cell case-control studies" by Lee and Han (2024).
+Repository of "Pseudobulk with proper offsets has the same statistical properties as generalized linear mixed models in single-cell case-control studies" by [Lee and Han (2024)](https://doi.org/10.1093/bioinformatics/btae498).
 
 ## A simple example
 The following code demonstrates the equivalence between offset pseudobulk and negative-binomial GLMM using the example from nebula repository [link](https://github.com/lhe17/nebula). 
